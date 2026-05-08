@@ -1,0 +1,6 @@
+{
+  "name": "E-Commerce Admin Dashboard",
+  "description": "A modern, analytics-focused SaaS admin dashboard connected to Supabase for real-time sales data, inventory management, and customer insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
