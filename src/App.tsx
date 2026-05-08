@@ -14,6 +14,7 @@ import { ProductDetails } from './pages/ProductDetails';
 import { Orders } from './pages/Orders';
 import { Reviews } from './pages/Reviews';
 import { Customers } from './pages/Customers';
+import { Categories } from './pages/Categories';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, isAdmin, loading } = useAuth();
@@ -67,6 +68,7 @@ export default function App() {
             <Route index element={<Dashboard />} />
             <Route path="products" element={<Products />} />
             <Route path="products/:id" element={<ProductDetails />} />
+            <Route path="categories" element={<Categories />} />
             <Route path="orders" element={<Orders />} />
             <Route path="reviews" element={<Reviews />} />
             <Route path="customers" element={<Customers />} />

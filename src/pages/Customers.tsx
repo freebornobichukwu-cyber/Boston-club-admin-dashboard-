@@ -16,7 +16,7 @@ export function Customers() {
 
     const { data, error } = await supabase
       .from('customers')
-      .select('*')
+      .select('*, orders(count)')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -52,6 +52,7 @@ export function Customers() {
                 <tr>
                   <th className="px-6 py-4 font-medium">Customer Details</th>
                   <th className="px-6 py-4 font-medium">Contact</th>
+                  <th className="px-6 py-4 font-medium text-center">Total Orders</th>
                   <th className="px-6 py-4 font-medium text-right">Joined</th>
                 </tr>
               </thead>
@@ -87,6 +88,11 @@ export function Customers() {
                           </div>
                         )}
                       </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="inline-flex items-center justify-center min-w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold text-sm">
+                        {customer.orders?.[0]?.count || 0}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex flex-col items-end gap-1 text-slate-500">

@@ -26,7 +26,12 @@ export function Products() {
     const { data: catData } = await supabase.from('categories').select('*');
     if (catData) setCategories(catData);
 
-    const { data: prodData } = await supabase.from('products').select('*');
+    const { data: prodData } = await supabase.from('products').select(`
+      *,
+      category:categories(title),
+      product_variants (price, stock_quantity),
+      product_images (image_url)
+    `);
     if (prodData) setProducts(prodData);
     
     setLoading(false);
@@ -108,9 +113,11 @@ export function Products() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-slate-50 text-slate-400 text-[10px] uppercase font-bold tracking-wider border-b border-slate-200">
                 <tr>
+                  <th className="px-6 py-4">Image</th>
                   <th className="px-6 py-4">Name</th>
                   <th className="px-6 py-4">Category</th>
-                  <th className="px-6 py-4">ID</th>
+                  <th className="px-6 py-4">Price Range</th>
+                  <th className="px-6 py-4">Stock</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -123,17 +130,53 @@ export function Products() {
                     className="hover:bg-slate-50/50 transition-colors group"
                   >
                     <td className="px-6 py-4">
+                      {product.product_images && product.product_images.length > 0 ? (
+                        <img src={product.product_images[0].image_url} alt={product.name} className="w-12 h-12 object-cover rounded-md border border-slate-200" />
+                      ) : (
+                        <div className="w-12 h-12 bg-slate-100 rounded-md border border-slate-200 flex items-center justify-center text-slate-300">
+                          <ShoppingBag className="w-5 h-5" />
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
                       <Link to={`/products/${product.id}`} className="flex flex-col">
                         <span className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{product.name}</span>
-                        <span className="text-xs text-slate-400 truncate max-w-xs">{product.description}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">#{product.id.toString().slice(0, 8)}</span>
                       </Link>
                     </td>
                     <td className="px-6 py-4">
                       <span className="bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                        {product.category_id}
+                        {product.category?.title || product.category_id}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-xs font-mono text-slate-400">#{product.id.toString().slice(0, 6)}</td>
+                    <td className="px-6 py-4">
+                      <span className="font-medium text-slate-900">
+                        {product.product_variants && product.product_variants.length > 0 ? (
+                          (() => {
+                            const prices = product.product_variants.map((v: any) => v.price);
+                            const minPrice = Math.min(...prices);
+                            const maxPrice = Math.max(...prices);
+                            return minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
+                          })()
+                        ) : (
+                          <span className="text-slate-400 italic font-normal text-xs">No variants</span>
+                        )}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {product.product_variants && product.product_variants.length > 0 ? (
+                        (() => {
+                          const totalStock = product.product_variants.reduce((sum: number, v: any) => sum + (v.stock_quantity || 0), 0);
+                          return (
+                            <span className={`font-bold ${totalStock < 10 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                              {totalStock} in stock
+                            </span>
+                          );
+                        })()
+                      ) : (
+                        <span className="text-slate-400 text-xs">-</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link to={`/products/${product.id}`} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">

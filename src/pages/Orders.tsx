@@ -16,38 +16,30 @@ const STATUSES = [
 export function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const fetchOrders = async () => {
     setLoading(true);
-    if (!supabase) {
-      setOrders([
-        { 
-          id: 'ORD-20240508-001', 
-          customer_id: 'CUST-A', 
-          total_amount: 120.50, 
-          status: 'order_confirmed', 
-          payment_reference: 'PAY-123456',
-          tracking_code: 'TRK-987654',
-          admin_verified: true,
-          created_at: new Date().toISOString() 
-        },
-      ]);
-      setLoading(false);
-      return;
-    }
+    if (!supabase) return;
 
-    const { data } = await supabase
+    let query = supabase
       .from('orders')
       .select('*, customers(full_name, email)')
       .order('created_at', { ascending: false });
     
+    if (statusFilter !== 'all') {
+      query = query.eq('status', statusFilter);
+    }
+    
+    const { data, error } = await query;
+    if (error) console.error(error);
     if (data) setOrders(data);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [statusFilter]);
 
   const updateStatus = async (id: string, newStatus: string) => {
     if (!supabase) return;
@@ -72,10 +64,20 @@ export function Orders() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Order Management</h1>
           <p className="text-sm text-slate-500">Manage manual payment verification and fulfillment</p>
+        </div>
+        <div className="flex gap-2">
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="border-slate-200 rounded-lg text-sm bg-white"
+          >
+            <option value="all">All Orders</option>
+            {STATUSES.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
+          </select>
         </div>
       </div>
 

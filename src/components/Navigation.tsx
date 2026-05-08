@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShoppingBag, ShoppingCart, LogOut, Bell, Search, Menu, MessageSquare, Users } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ShoppingCart, LogOut, Bell, Search, Menu, MessageSquare, Users, FolderTree } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
@@ -11,6 +11,7 @@ export function Sidebar({ className }: { className?: string }) {
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Products', path: '/products', icon: ShoppingBag },
+    { name: 'Categories', path: '/categories', icon: FolderTree },
     { name: 'Orders', path: '/orders', icon: ShoppingCart },
     { name: 'Reviews', path: '/reviews', icon: MessageSquare },
     { name: 'Customers', path: '/customers', icon: Users },

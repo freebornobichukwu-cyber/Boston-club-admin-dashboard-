@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../lib/auth';
 import { LogIn } from 'lucide-react';
 import { Navigate } from 'react-router-dom';

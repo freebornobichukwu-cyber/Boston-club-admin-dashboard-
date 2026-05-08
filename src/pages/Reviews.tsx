@@ -9,16 +9,17 @@ export function Reviews() {
 
   const fetchReviews = async () => {
     setLoading(true);
-    if (!supabase) {
-      setReviews([
-        { id: '1', product_id: 'PRD-1', rating: 5, comment: 'Great quality shoes!' },
-        { id: '2', product_id: 'PRD-2', rating: 3, comment: 'Okay, but size is a bit small.' },
-      ]);
-      setLoading(false);
-      return;
-    }
+    if (!supabase) return;
 
-    const { data } = await supabase.from('reviews').select('*');
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(`
+        *,
+        product:products(name),
+        customer:customers(full_name, email)
+      `);
+      
+    if (error) console.error(error);
     if (data) setReviews(data);
     setLoading(false);
   };
@@ -52,7 +53,8 @@ export function Reviews() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-400 text-[10px] uppercase font-bold tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Product ID</th>
+                  <th className="px-6 py-4 font-medium">Customer</th>
+                  <th className="px-6 py-4 font-medium">Product</th>
                   <th className="px-6 py-4 font-medium">Rating</th>
                   <th className="px-6 py-4 font-medium w-1/2">Comment</th>
                   <th className="px-6 py-4 font-medium text-right">Actions</th>
@@ -66,7 +68,13 @@ export function Reviews() {
                     key={review.id} 
                     className="hover:bg-slate-50/50 transition-colors"
                   >
-                    <td className="px-6 py-4 text-slate-500 whitespace-nowrap">{review.product_id}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-900">{review.customer?.full_name || 'Anonymous User'}</span>
+                        <span className="text-xs text-slate-500">{review.customer?.email || review.customer_id}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-700 font-medium whitespace-nowrap">{review.product?.name || review.product_id}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center text-amber-400">
                         {Array.from({ length: 5 }).map((_, i) => (
