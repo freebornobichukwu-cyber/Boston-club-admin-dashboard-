@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShoppingBag, ShoppingCart, LogOut, Bell, Search, Menu, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ShoppingCart, LogOut, Bell, Search, Menu, MessageSquare, Users } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
@@ -13,6 +13,7 @@ export function Sidebar({ className }: { className?: string }) {
     { name: 'Products', path: '/products', icon: ShoppingBag },
     { name: 'Orders', path: '/orders', icon: ShoppingCart },
     { name: 'Reviews', path: '/reviews', icon: MessageSquare },
+    { name: 'Customers', path: '/customers', icon: Users },
   ];
 
   return (

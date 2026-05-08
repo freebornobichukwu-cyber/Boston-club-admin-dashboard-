@@ -13,6 +13,7 @@ import { Products } from './pages/Products';
 import { ProductDetails } from './pages/ProductDetails';
 import { Orders } from './pages/Orders';
 import { Reviews } from './pages/Reviews';
+import { Customers } from './pages/Customers';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, isAdmin, loading } = useAuth();
@@ -68,6 +69,7 @@ export default function App() {
             <Route path="products/:id" element={<ProductDetails />} />
             <Route path="orders" element={<Orders />} />
             <Route path="reviews" element={<Reviews />} />
+            <Route path="customers" element={<Customers />} />
           </Route>
         </Routes>
       </Router>
